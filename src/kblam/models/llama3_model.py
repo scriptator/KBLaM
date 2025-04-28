@@ -355,6 +355,7 @@ class KblamLlamaAttention(nn.Module):
             causal_mask = attention_mask[:, :, :, : key_states.shape[-2]]
             attn_weights = attn_weights + causal_mask
         # upcast attention to fp32
+        
         attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32)
         if not attn_weights.requires_grad:
             # TODO: Make this function injectable
@@ -617,7 +618,6 @@ class LlamaModel(LlamaPreTrainedModel):
         all_hidden_states = () if output_hidden_states else None
         all_self_attns = () if output_attentions else None
         next_decoder_cache = None
-
         for decoder_layer in self.layers:
             if output_hidden_states:
                 all_hidden_states += (hidden_states,)

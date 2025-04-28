@@ -20,7 +20,7 @@ from kblam.kb_encoder import KBEncoder
 from kblam.models.kblam_config import KBLaMConfig
 from kblam.models.llama3_model import KblamLlamaForCausalLM
 from kblam.models.phi3_model import KBLaMPhi3ForCausalLM
-from kblam.utils.data_utils import aug_row, generate_multi_entity_qa
+from kblam.utils.data_utils import augment_row, generate_multi_entity_qa
 from kblam.utils.eval_utils import (
     instruction_prompts,
     instruction_prompts_multi_entities,
@@ -135,7 +135,6 @@ def perform_eval(
                 model,
                 Q,
                 kb=kb_embedding,
-                topk_size=topk_size,
                 kb_config=kb_config,
             ).split(Q)[1]
         elif eval_mode == "icl":
@@ -623,8 +622,7 @@ def _prepare_models(
     tokenizer = AutoTokenizer.from_pretrained(
         llm_base_dir, trust_remote_code=True, padding_side="left"
     )
-    tokenizer.pad_token = "^"
-
+    tokenizer.pad_token = tokenizer.eos_token
     if llm_type == "llama3":
         if query_head_path:
             model = KblamLlamaForCausalLM.from_pretrained(
@@ -637,8 +635,8 @@ def _prepare_models(
         else:
             model = KblamLlamaForCausalLM.from_pretrained(
                 model_path,
-                device_map="cuda",
-                torch_dtype="auto",
+                device_map={"": 0},
+                torch_dtype=torch.bfloat16,
                 trust_remote_code=True,
             )
     else:
@@ -654,7 +652,7 @@ def _prepare_models(
 
     # config = model.config.to_dict()
     kb_config = KBLaMConfig(
-        sep_query_head=True,
+        sep_query_head=False,
         kb_layer_frequency=kb_layer_frequency,
         kb_scale_factor=kb_scale_factor,
     )
@@ -711,7 +709,7 @@ def eval_accuracy(
     if not fancy_question:
         input_strs_gen = (dataset_subset[i]["Q"] for i in range(test_batch_size))
     else:
-        input_strs_gen = (aug_row(dataset_subset[i]) for i in range(test_batch_size))
+        input_strs_gen = (augment_row(dataset_subset[i]) for i in range(test_batch_size))
     input_strs = [format_func_map[llm_type](ex) for ex in input_strs_gen]
 
     tokenizer_output = tokenizer(input_strs, return_tensors="pt", padding=True).to(

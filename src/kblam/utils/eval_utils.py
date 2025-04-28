@@ -4,9 +4,9 @@ import numpy as np
 import torch
 import transformers
 
-from KBLaM.src.kblam.models.kblam_config import KBLaMConfig
-from KBLaM.src.kblam.models.llama3_model import KblamLlamaForCausalLM
-from KBLaM.src.kblam.models.phi3_model import KBLaMPhi3ForCausalLM
+from kblam.models.kblam_config import KBLaMConfig
+from kblam.models.llama3_model import KblamLlamaForCausalLM
+from kblam.models.phi3_model import KBLaMPhi3ForCausalLM
 
 instruction_prompts = """
 Please answer questions based on the given text with format: "The {property} of {name} is {description}"
