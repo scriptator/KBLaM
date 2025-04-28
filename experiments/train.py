@@ -754,6 +754,8 @@ def main():
     args = parser.parse_args()
     if torch.cuda.is_available():
         device = torch.device("cuda")
+    if torch.mps.is_available():
+        device = torch.device("mps")
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
