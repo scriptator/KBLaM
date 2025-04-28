@@ -1,3 +1,0 @@
-CUDA_VISIBLE_DEVICES=0 uv run --group experiment python experiments/train.py --dataset_dir datasets/ --train_dataset synthetic --N 120000 --B 20 --lr 0.0005  --use_lr_decay  --use_cached_embd --encoder_spec all-MiniLM-L6-v2  --key_embd_src key --use_data_aug --hf_token hf_"eaQaJGWkXWBPiKakrlGzFwShUqTsEunHeo" --hf_model_spec "meta-llama/Meta-Llama-3-8B" --llm_type llama3
-
-CUDA_VISIBLE_DEVICES=0 uv run --group experiment python experiments/eval.py --dataset_dir datasets/ --train_dataset synthetic --N 120000 --B 20 --lr 0.0005  --use_lr_decay  --use_cached_embd --encoder_spec all-MiniLM-L6-v2  --key_embd_src key --use_data_aug --hf_token hf_"eaQaJGWkXWBPiKakrlGzFwShUqTsEunHeo" --hf_model_spec "meta-llama/Meta-Llama-3-8B" --llm_type llama3
